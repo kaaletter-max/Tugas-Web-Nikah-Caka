@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pernikahan Gilang & Yaya</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Poppins', sans-serif;
+      overflow: hidden;
+      background: #fffaf6;
+      color: #4b3d35;
+    }
+    .slide {
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      transition: transform 0.8s ease;
+    }
+    .slides {
+      display: flex;
+      width: 300vw;
+      transition: transform 1s ease;
+    }
+    h1 {
+      font-family: 'Great Vibes', cursive;
+      font-size: 3em;
+      color: #a67957;
+    }
+    p {
+      font-size: 1.2em;
+      margin-top: 10px;
+      max-width: 80%;
+    }
+    button {
+      margin-top: 20px;
+      background: #c5906d;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 25px;
+      cursor: pointer;
+      font-size: 1em;
+      transition: 0.3s;
+    }
+    button:hover { background: #a67350; }
+
+    .nav {
+      position: fixed;
+      bottom: 20px;
+      width: 100%;
+      text-align: center;
+      z-index: 10;
+    }
+
+    input[type="text"] {
+      padding: 10px;
+      border: 1px solid #caa588;
+      border-radius: 10px;
+      width: 70%;
+      font-size: 1em;
+      text-align: center;
+      margin-bottom: 15px;
+    }
+
+    canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      pointer-events: none;
+      width: 100%;
+      height: 100%;
+    }
+
+    /* Tombol musik bulat */
+    #soundBtn {
+      position: fixed;
+      bottom: 90px;
+      right: 20px;
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background: #c5906d;
+      color: white;
+      border: none;
+      font-size: 1.5em;
+      cursor: pointer;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+      transition: 0.3s;
+      z-index: 20;
+    }
+
+    #soundBtn:hover {
+      background: #a67350;
+      transform: scale(1.1);
+    }
+  </style>
+</head>
+<body>
+  <div class="slides" id="slides">
+    <!-- SLIDE 1 (Foto Atta & Aurel baru) -->
+    <div class="slide" style="
+      background: linear-gradient(180deg, rgba(0,0,0,0.35), rgba(0,0,0,0.55)),
+                  url('https://tse4.mm.bing.net/th/id/OIP.iD2N2sRBUaVUU-muDsXV2QHaF9?pid=Api') 
+                  no-repeat center center/cover;
+      color: #fff;
+    ">
+      <h1>Atta & Aurel</h1>
+      <p>Kami mengundang Anda untuk berbagi kebahagiaan di hari pernikahan kami.</p>
+      <p>“Cinta sejati bukan tentang kesempurnaan, tapi saling melengkapi.”</p>
+    </div>
+
+    <!-- SLIDE 2 -->
+    <div class="slide" style="background: linear-gradient(180deg, #fbeade, #f7cfb8);">
+      <h1>Hari Bahagia</h1>
+      <p><b>Tanggal:</b> Sabtu, 21 Desember 2025</p>
+      <p><b>Waktu:</b> 10.00 WIB</p>
+      <p><b>Tempat:</b> Lapangan Perumahan Tering Raya, Batam</p>
+      <p>Doa dan kehadiran Anda menjadi kebahagiaan bagi kami.</p>
+    </div>
+
+    <!-- SLIDE 3 -->
+    <div class="slide" style="background: linear-gradient(180deg, #fff3eb, #f7d9c0);">
+      <h1>Pesan untuk Pengantin</h1>
+      <input type="text" id="pesan" placeholder="Tulis pesanmu di sini..." />
+      <br>
+      <button onclick="kirimPesan()">Kirim 💌</button>
+      <p id="balasan" style="margin-top:20px; font-style:italic;"></p>
+    </div>
+  </div>
+
+  <div class="nav">
+    <button onclick="prevSlide()">⟵ Sebelumnya</button>
+    <button onclick="nextSlide()">Selanjutnya ⟶</button>
+  </div>
+
+  <button id="soundBtn">🔊</button>
+  <canvas id="confetti"></canvas>
+
+  <audio id="bgMusic" autoplay loop>
+    <source src="c:\Users\Lenovo\Downloads\taylor-swift-love-story.mp3" type="audio/mpeg">
+  </audio>
+
+  <script>
+    let index = 0;
+    const slides = document.getElementById("slides");
+
+    function nextSlide() {
+      if (index < 2) index++;
+      slides.style.transform = `translateX(-${index * 100}vw)`;
+    }
+
+    function prevSlide() {
+      if (index > 0) index--;
+      slides.style.transform = `translateX(-${index * 100}vw)`;
+    }
+
+    // Musik toggle
+    const bgMusic = document.getElementById("bgMusic");
+    const soundBtn = document.getElementById("soundBtn");
+    let isPlaying = true;
+
+    soundBtn.addEventListener("click", () => {
+      if (isPlaying) {
+        bgMusic.pause();
+        soundBtn.textContent = "🔇";
+      } else {
+        bgMusic.play();
+        soundBtn.textContent = "🔊";
+      }
+      isPlaying = !isPlaying;
+    });
+
+    // Konfeti
+    const canvas = document.getElementById("confetti");
+    const ctx = canvas.getContext("2d");
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    let confetti = [];
+
+    function buatConfetti() {
+      for (let i = 0; i < 150; i++) {
+        confetti.push({
+          x: Math.random() * canvas.width,
+          y: Math.random() * -canvas.height,
+          r: Math.random() * 5 + 2,
+          c: `hsl(${Math.random() * 50 + 20}, 80%, 70%)`,
+          s: Math.random() * 3 + 2
+        });
+      }
+    }
+
+    function animasiConfetti() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      confetti.forEach(p => {
+        p.y += p.s;
+        if (p.y > canvas.height) p.y = -10;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+        ctx.fillStyle = p.c;
+        ctx.fill();
+      });
+    }
+
+    function kirimPesan() {
+      const pesan = document.getElementById("pesan").value;
+      const balasan = document.getElementById("balasan");
+      if (pesan.trim() === "") {
+        alert("Tulis dulu pesan kamu 💌");
+        return;
+      }
+      balasan.textContent = `Terima kasih atas pesanmu: "${pesan}" 💕`;
+      buatConfetti();
+      setInterval(animasiConfetti, 20);
+    }
+
+    window.addEventListener("resize", () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    });
+  </script>
+</body>
+</html>
